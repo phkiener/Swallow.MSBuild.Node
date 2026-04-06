@@ -10,13 +10,13 @@
     present in Content, otherwise it would be shipped directly as-is.
    -->
   <ItemGroup>
-    <FrontendConfig Include="$(PackageJsonPath)package.json" />
-    <FrontendConfig Include="$(PackageJsonPath)package-lock.json" />
-    <FrontendBuild Include="@(FrontendCompilePatterns->'$(MSBuildProjectDirectory)**/%(Identity)')" Exclude="$(PackageJsonPath)node_modules/**/*;$(FrontendCompileExcludes)" />
+    <FrontendConfig Include="$(FrontendRootDir)package.json" />
+    <FrontendConfig Include="$(FrontendRootDir)package-lock.json" />
+    <FrontendBuild Include="@(FrontendCompilePatterns->'$(MSBuildProjectDirectory)**/%(Identity)')" Exclude="$(FrontendRootDir)node_modules/**/*;$(FrontendCompileExcludes)" />
 
     <Content Remove="@(FrontendConfig)" />
     <Content Remove="@(FrontendBuild)" />
-    <Content Remove="$(PackageJsonPath)node_modules/**/*" />
+    <Content Remove="$(FrontendRootDir)node_modules/**/*" />
 
     <None Include="@(FrontendConfig)" />
     <None Include="@(FrontendBuild)" />
@@ -24,87 +24,61 @@
 
   <!-- General setup; ensure that everything works. -->
   <Target Name="_SetupFrontendBuild">
-    <ItemGroup>
-      <_DependencyInstallStamp Include="$(BaseIntermediateOutputPath)npm-install.stamp" />
-      <_FrontendBuildStamp Include="$(IntermediateOutputPath)npm-build.stamp" />
-
-      <_FrontendInputs Include="@(FrontendBuild)" />
-      <_FrontendInputs Include="@(FrontendConfig)" />
-      <_FrontendInputs Include="@(FrontendDependencies)" />
-      <_FrontendTarget Include="$(IntermediateOutputPath)dist/**/*" />
-    </ItemGroup>
   </Target>
 
-  <!-- Restore -->
+  <!-- Restore; TODO: Incrementalism -->
   <Target Name="_RemoveInstalledPackages" DependsOnTargets="_SetupFrontendBuild" Condition="$(RestoreForce) == 'true'">
-    <RemoveDir Directories="$(PackageJsonPath)node_modules/" />
-    <Delete Files="@(_DependencyInstallStamp)" />
+    <RemoveDir Directories="$(FrontendRootDir)node_modules/" />
   </Target>
 
-  <Target Name="_InstallDependencies" DependsOnTargets="_SetupFrontendBuild" Inputs="@(FrontendConfig)" Outputs="@(_DependencyInstallStamp)">
-    <Exec Command="$(NpmToolPath) install" EchoOff="true" WorkingDirectory="$(PackageJsonPath)" />
-    <WriteLinesToFile File="@(_DependencyInstallStamp)" Overwrite="true" Lines="$([System.DateTime]::Now.ToString('yyyy.MM.dd HH:mm:ss'))" />
+  <Target Name="_InstallDependencies" DependsOnTargets="_SetupFrontendBuild">
+    <Exec Command="$(BuildToolPath) install" EchoOff="true" WorkingDirectory="$(FrontendRootDir)" />
   </Target>
 
-  <!-- Build -->
-  <Target Name="_RunBuildScript" DependsOnTargets="_InstallDependencies" Inputs="@(_FrontendInputs)" Outputs="@(_FrontendBuildStamp)" >
+  <!-- Build; TODO: Incrementalism; make target folder configurable -->
+  <Target Name="_RunBuildScript" DependsOnTargets="_InstallDependencies">
     <MakeDir Directories="$(IntermediateOutputPath)dist/" />
 
-    <Exec Command="$(NpmToolPath) run --if-present $(NpmBuildTarget)"
+    <Exec Command="$(BuildToolPath) run --if-present $(BuildScriptName)"
           EnvironmentVariables="OUT_DIR=$(IntermediateOutputPath)dist/"
           EchoOff="true"
-          WorkingDirectory="$(PackageJsonPath)" />
-
-    <WriteLinesToFile File="@(_FrontendBuildStamp)" Overwrite="true" Lines="$([System.DateTime]::Now.ToString('yyyy.MM.dd HH:mm:ss'))" />
+          WorkingDirectory="$(FrontendRootDir)" />
   </Target>
 
   <!-- StaticWebAssets -->
   <Target Name="_IncludeFrontendBuildAssets" DependsOnTargets="_FrontendBuild">
-
-    <!-- TODO: What do ContentRrot and BasePath do? -->
+    <ItemGroup>
+      <_FrontendOutput Include="$(IntermediateOutputPath)dist/**/*" />
+    </ItemGroup>
     <DefineStaticWebAssets
-      CandidateAssets="@(_FrontendTarget->Distinct())"
-      FingerprintCandidates="$(StaticWebAssetsFingerprintContent)"
-      FingerprintPatterns="@(StaticWebAssetFingerprintPattern)"
+      CandidateAssets="@(_FrontendOutput->Distinct())"
       RelativePathPattern="$(IntermediateOutputPath)dist/**/*"
-      SourceType="Discovered"
-      SourceId="$(PackageId)"
-      ContentRoot="$(MSBuildProjectDirectory)"
+      ContentRoot="$(IntermediateOutputPath)dist/"
       BasePath="$(StaticWebAssetBasePath)"
+      SourceType="Computed"
+      SourceId="$(PackageId)"
       AssetMergeSource="$(StaticWebAssetMergeTarget)"
-      CacheManifestPath="$(_ResolveJSModuleStaticWebAssetsRazorCachePath)">
+    >
       <Output TaskParameter="Assets" ItemName="StaticWebAsset" />
       <Output TaskParameter="Assets" ItemName="_CurrentProjectStaticWebAsset" />
     </DefineStaticWebAssets>
 
     <DefineStaticWebAssetEndpoints
       CandidateAssets="@(_CurrentProjectStaticWebAsset)"
+      ExistingEndpoints="@(StaticWebAssetEndpoint)"
       ContentTypeMappings="@(StaticWebAssetContentTypeMapping)">
       <Output TaskParameter="Endpoints" ItemName="StaticWebAssetEndpoint" />
     </DefineStaticWebAssetEndpoints>
-
-    <ItemGroup>
-      <!-- TODO: What's going on here? -->
-      <StaticWebAssetDiscoveryPattern Include="$(PackageId)\wwwroot" Condition="Exists('$(MSBuildProjectDirectory)\wwwroot')">
-        <Source>$(PackageId)</Source>
-        <BasePath>$(StaticWebAssetBasePath)</BasePath>
-        <ContentRoot>$(MSBuildProjectDirectory)\wwwroot\</ContentRoot>
-        <Pattern>**</Pattern>
-      </StaticWebAssetDiscoveryPattern>
-
-      <Content Remove="@(StaticWebAsset)" />
-    </ItemGroup>
   </Target>
 
   <!-- Clean-->
   <Target Name="_CleanFrontendOutputs" DependsOnTargets="_SetupFrontendBuild">
-    <Exec Command="$(NpmToolPath) run --if-present $(NpmCleanTarget)"
+    <Exec Command="$(BuildToolPath) run --if-present $(CleanScriptName)"
           EnvironmentVariables="OUT_DIR=$(IntermediateOutputPath)dist/"
           EchoOff="true"
-          WorkingDirectory="$(PackageJsonPath)" />
+          WorkingDirectory="$(FrontendRootDir)" />
 
     <RemoveDir Directories="$(IntermediateOutputPath)dist/" />
-    <Delete Files="@(_FrontendBuildStamp)" />
   </Target>
 
 </Project>

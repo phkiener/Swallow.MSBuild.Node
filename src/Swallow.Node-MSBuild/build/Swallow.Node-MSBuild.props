@@ -1,66 +1,29 @@
 <Project>
 
   <PropertyGroup>
+    <FrontendRootDir>$(MSBuildProjectDirectory)/</FrontendRootDir>
 
-    <!-- Location of the package.json file (and thus the node_modules as well) -->
-    <PackageJsonPath>$(MSBuildProjectDirectory)/</PackageJsonPath>
-
-    <!-- The 'npm' instance to use when building -->
-    <NpmToolPath>npm</NpmToolPath>
-
-    <!-- Which script to run when building (dotnet build) -->
-    <NpmBuildTarget>build</NpmBuildTarget>
-
-    <!-- Which script to run when cleaning (dotnet clean) -->
-    <NpmCleanTarget>clean</NpmCleanTarget>
-
-    <!-- Extensions that should be considered for the frontend build. -->
-    <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx</FrontendCompilePatterns>
+    <BuildToolPath>npm</BuildToolPath>
+    <BuildScriptName>build</BuildScriptName>
+    <CleanScriptName>clean</CleanScriptName>
 
     <!--
+      All JS-adjacent files (JavaScript, TypeScript and their React variants for good measure) are
+      considered build-relevant.
+
       By default, we exclude all files in wwwroot/ from our build.
       This means they will stay untouched in <Content> and have no impact on
       the incremental build. They *might* be dependencies to the build nonetheless,
       we can't really detect that. It's up to the user to do that correctly.
     -->
+    <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx</FrontendCompilePatterns>
     <FrontendCompileExcludes>wwwroot/**/*</FrontendCompileExcludes>
   </PropertyGroup>
 
   <PropertyGroup>
-    <!--
-      Just because it's a pain to find out, here's how the relevant dependencies work:
-
-      'dotnet publish':
-      GenerateStaticWebAssetsPublishManifest -> $(GenerateStaticWebAssetsPublishManifestDependsOn)
-        ResolveAllPublishStaticWebAssets
-          ResolveCorePublishStaticWebAssets -> $(ResolveCorePublishStaticWebAssetsDependsOn)
-          ResolvePublishStaticWebAssets -> $(ResolvePublishStaticWebAssetsDependsOn)
-          ResolvePublishRelatedStaticWebAssets -> $(ResolvePublishRelatedStaticWebAssetsDependsOn)
-
-      'dotnet publish', compression:
-      GeneratePublishCompressedStaticWebAssets -> $(GeneratePublishCompressedStaticWebAssetsDependsOn)
-        ResolvePublishCompressedStaticWebAssetsConfiguration
-          ResolvePublishStaticWebAssets -> $(ResolvePublishStaticWebAssetsDependsOn)
-
-      'dotnet pack':
-      GenerateStaticWebAssetsPackFiles
-        GenerateStaticWebAssetsManifest -> $(GenerateStaticWebAssetsManifestDependsOn)
-          ResolveBuildStaticWebAssets
-            ResolveCoreStaticWebAssets -> $(ResolveCoreStaticWebAssetsDependsOn)
-            ResolveStaticWebAssetsInputs -> $(ResolveStaticWebAssetsInputsDependsOn)
-            ResolveBuildRelatedStaticWebAssets -> $(ResolveBuildRelatedStaticWebAssetsDependsOn)
-
-      'dotnet pack', compression
-      GenerateBuildCompressedStaticWebAssets -> $(GenerateBuildCompressedStaticWebAssetsDependsOn)
-        ResolveBuildCompressedStaticWebAssetsConfiguration
-          ResolveStaticWebAssetsInputs -> $(ResolveStaticWebAssetsInputsDependsOn)
-
-      So by hooking into just $(ResolveStaticWebAssetsInputsDependsOn) and $(ResolvePublishStaticWebAssetsDependsOn),
-      we can make sure to have our target run before all the relevant SDK targets. To integrate nicely, our target has
-      to imitate how ResolveProjectStaticWebAssets works in regards to wwwroot/-files.
-    -->
-    <ResolveStaticWebAssetsInputsDependsOn>_IncludeFrontendBuildAssets;$(ResolveCoreStaticWebAssetsDependsOn)</ResolveStaticWebAssetsInputsDependsOn>
-    <ResolvePublishStaticWebAssetsDependsOn>_IncludeFrontendBuildAssets;$(ResolvePublishStaticWebAssetsDependsOn)</ResolvePublishStaticWebAssetsDependsOn>
+    <!-- https://github.com/dotnet/sdk/blob/bd75158074f6bcba0e58c22ceb13bdd3eb85c473/src/StaticWebAssetsSdk/Architecture.md -->
+    <GenerateComputedBuildStaticWebAssetsDependsOn>_IncludeFrontendBuildAssets;$(GenerateComputedBuildStaticWebAssetsDependsOn)</GenerateComputedBuildStaticWebAssetsDependsOn>
+    <GenerateComputedPublishStaticWebAssetsDependsOn>_IncludeFrontendBuildAssets;$(GenerateComputedPublishStaticWebAssetsDependsOn)</GenerateComputedPublishStaticWebAssetsDependsOn>
   </PropertyGroup>
 
 </Project>
