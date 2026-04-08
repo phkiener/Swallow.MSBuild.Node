@@ -3,9 +3,6 @@
   <!-- "Inspired" by https://github.com/dotnet/samples/blob/main/msbuild/custom-task-code-generation/AppSettingStronglyTyped/AppSettingStronglyTyped/AppSettingStronglyTyped.csproj -->
   
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IsPackable>true</IsPackable>
-    
     <NoWarn>NU5100</NoWarn>
     <GenerateDependencyFile>true</GenerateDependencyFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -19,6 +16,10 @@
   <ItemGroup>
     <Content Include="build/$(PackageId).props" PackagePath="build/" />
     <Content Include="build/$(PackageId).targets" PackagePath="build/" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="obj\Debug\" />
   </ItemGroup>
   
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">

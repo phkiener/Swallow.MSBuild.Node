@@ -1,0 +1,36 @@
+<Project>
+  <PropertyGroup>
+
+    <!-- General options -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+
+    <ContinuousIntegrationBuild Condition="$(Configuration) == 'Release'">true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+
+    <!-- NuGet options -->
+    <IsPackable>true</IsPackable>
+    <IncludeSymbols>false</IncludeSymbols>
+
+    <Authors>Philipp Kiener</Authors>
+    <Copyright>2026 Philipp Kiener</Copyright>
+    <PackageProjectUrl>https://github.com/phkiener/Swallow.NodeForMSBuild</PackageProjectUrl>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageTags>msbuild;node;npm;frontend;</PackageTags>
+    <Description>An integration of NodeJS-based build tooling into MSBuild</Description>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/phkiener/Swallow.NodeForMSBuild</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Always included files -->
+    <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)../LICENSE.txt" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)../icon.png" Pack="true" PackagePath="/" Visible="false" />
+  </ItemGroup>
+</Project>
