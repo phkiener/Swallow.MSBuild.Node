@@ -70,8 +70,18 @@ internal static class TestUtils
         Directory.CreateDirectory(targetDirectory);
 
         Execute(dotnetExecutablePath, "restore", projectPath);
-        Execute(dotnetExecutablePath, "build", "--configuration", "Release", projectPath);
-        Execute(dotnetExecutablePath, "publish", "--output", targetDirectory, projectPath);
+        Execute(dotnetExecutablePath, "build", "--no-restore", "--configuration", "Release", projectPath);
+        Execute(dotnetExecutablePath, "publish", "--no-restore", "--no-build", "--configuration", "Release", "--output", targetDirectory, projectPath);
+    }
+
+    public static void PackProject(string projectPath, string targetDirectory)
+    {
+        dotnetExecutablePath ??= FindDotnetExecutable();
+        Directory.CreateDirectory(targetDirectory);
+
+        Execute(dotnetExecutablePath, "restore", projectPath);
+        Execute(dotnetExecutablePath, "build", "--no-restore", "--configuration", "Release", projectPath);
+        Execute(dotnetExecutablePath, "pack", "--no-restore", "--no-build", "--configuration", "Release", "--output", targetDirectory, projectPath);
     }
 
     private static string FindDotnetExecutable()

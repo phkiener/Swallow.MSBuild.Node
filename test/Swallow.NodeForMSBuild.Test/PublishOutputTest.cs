@@ -21,7 +21,7 @@ public sealed class PublishOutputTest
         var publishOutput = Path.Combine(testRunPath, "publish");
         TestUtils.PublishProject(testProject, publishOutput);
 
-        var expectedFile = Path.Combine(testRunPath, "publish", "wwwroot", "index.min.js");
+        var expectedFile = Path.Combine(publishOutput, "wwwroot", "index.min.js");
         await Assert.That(File.Exists(expectedFile)).IsTrue();
     }
 }

@@ -3,6 +3,7 @@
 [oO]bj/
 [pP]ublish/
 [pP]ackages/
+*.binlog
 
 # IDEs
 .vs/

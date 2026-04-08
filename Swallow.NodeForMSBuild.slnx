@@ -20,5 +20,6 @@
   <Folder Name="/Tests/">
     <Project Path="test/Swallow.NodeForMSBuild.Test/Swallow.NodeForMSBuild.Test.csproj" />
     <Project Path="test/TestHost/TestHost.csproj" />
+    <Project Path="test/TestPackage/TestPackage.csproj" />
   </Folder>
 </Solution>
