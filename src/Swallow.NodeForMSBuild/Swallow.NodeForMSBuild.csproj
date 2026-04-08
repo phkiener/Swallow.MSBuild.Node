@@ -13,6 +13,7 @@
     
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    <RootNamespace>Swallow.Node-MSBuild</RootNamespace>
   </PropertyGroup>
   
   <ItemGroup>

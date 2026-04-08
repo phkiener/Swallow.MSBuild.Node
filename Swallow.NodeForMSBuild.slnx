@@ -13,6 +13,6 @@
     <Project Path="docs/demo/package/DemoPackage.csproj" />
   </Folder>
   <Folder Name="/Library/">
-    <Project Path="src/Swallow.Node-MSBuild/Swallow.Node-MSBuild.csproj" />
+    <Project Path="src\Swallow.NodeForMSBuild\Swallow.NodeForMSBuild.csproj" />
   </Folder>
 </Solution>

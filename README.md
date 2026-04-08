@@ -1,3 +1,3 @@
-# Swallow.Node-MSBuild
+# Swallow.NodeForMSBuild
 
 An MSBuild integration for NodeJS builds.
