@@ -31,12 +31,12 @@
 
   <Target Name="_SetupFrontendBuild" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <PropertyGroup>
-      <FrontendOutputPath Condition="$(FrontendOutputPath) == ''">$(IntermediateOutputPath)dist/</FrontendOutputPath>
+      <FrontendOutputPath Condition="$(FrontendOutputPath) == ''">$(MSBuildProjectDirectory)/$(IntermediateOutputPath)dist/</FrontendOutputPath>
     </PropertyGroup>
 
     <ItemGroup>
-      <_DependencyInstallStamp Include="$(BaseIntermediateOutputPath)npm-install.stamp" />
-      <_FrontendBuildStamp Include="$(IntermediateOutputPath)npm-build.stamp" />
+      <_DependencyInstallStamp Include="$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)npm-install.stamp" />
+      <_FrontendBuildStamp Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)npm-build.stamp" />
 
       <_FrontendBuildInput Include="@(FrontendConfig)" />
       <_FrontendBuildInput Include="@(FrontendBuild)" />
