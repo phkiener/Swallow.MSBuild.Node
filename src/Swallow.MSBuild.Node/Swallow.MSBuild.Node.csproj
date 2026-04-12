@@ -1,27 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- "Inspired" by https://github.com/dotnet/samples/blob/main/msbuild/custom-task-code-generation/AppSettingStronglyTyped/AppSettingStronglyTyped/AppSettingStronglyTyped.csproj -->
-  
+
   <PropertyGroup>
     <NoWarn>NU5100</NoWarn>
     <GenerateDependencyFile>true</GenerateDependencyFile>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    
+
     <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
-    <RootNamespace>Swallow.Node-MSBuild</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Content Include="build/$(PackageId).props" PackagePath="build/" />
     <Content Include="build/$(PackageId).targets" PackagePath="build/" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="obj\Debug\" />
-  </ItemGroup>
-  
+
   <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
       <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" TargetPath="%(ReferenceCopyLocalPaths.DestinationSubPath)" />
