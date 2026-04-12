@@ -29,7 +29,7 @@
 
   <!-- SETUP -->
 
-  <Target Name="_SetupFrontendBuild">
+  <Target Name="_SetupFrontendBuild" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <PropertyGroup>
       <FrontendOutputPath Condition="$(FrontendOutputPath) == ''">$(IntermediateOutputPath)dist/</FrontendOutputPath>
     </PropertyGroup>
@@ -45,19 +45,19 @@
 
   <!-- RESTORE -->
 
-  <Target Name="_RemoveInstalledPackages" DependsOnTargets="_SetupFrontendBuild" BeforeTargets="_InstallDependencies" Condition="$(RestoreForce) == 'true'">
+  <Target Name="_RemoveInstalledPackages" DependsOnTargets="_SetupFrontendBuild" BeforeTargets="_InstallDependencies" Condition="$(RestoreForce) == 'true' AND EXISTS('$(FrontendRootPath)package.json')">
     <RemoveDir Directories="$(FrontendPackagePath)" />
     <Delete Files="@(_DependencyInstallStamp)" />
   </Target>
 
-  <Target Name="_InstallDependencies" DependsOnTargets="_SetupFrontendBuild" Inputs="@(FrontendConfig)" Outputs="@(_DependencyInstallStamp)">
+  <Target Name="_InstallDependencies" DependsOnTargets="_SetupFrontendBuild" Inputs="@(FrontendConfig)" Outputs="@(_DependencyInstallStamp)" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <Exec Command="$(BuildToolPath) install" EchoOff="true" WorkingDirectory="$(FrontendRootPath)" />
     <WriteLinesToFile File="@(_DependencyInstallStamp)" Lines="$([System.DateTime]::Now.ToBinary())" />
   </Target>
 
   <!-- BUILD -->
 
-  <Target Name="_RunBuildScript" DependsOnTargets="_InstallDependencies" Inputs="@(_FrontendBuildInput)" Outputs="@(_FrontendBuildStamp)">
+  <Target Name="_RunBuildScript" DependsOnTargets="_InstallDependencies" Inputs="@(_FrontendBuildInput)" Outputs="@(_FrontendBuildStamp)" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <MakeDir Directories="$(FrontendOutputPath)" />
 
     <Exec Command="$(BuildToolPath) run --if-present $(BuildScriptName)"
@@ -68,7 +68,7 @@
     <WriteLinesToFile File="@(_FrontendBuildStamp)" Lines="$([System.DateTime]::Now.ToBinary())" />
   </Target>
 
-  <Target Name="_IncludeFrontendBuildAssets" DependsOnTargets="_FrontendBuild">
+  <Target Name="_IncludeFrontendBuildAssets" DependsOnTargets="_FrontendBuild" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <ItemGroup>
       <_FrontendOutput Include="$(FrontendOutputPath)**/*" />
     </ItemGroup>
@@ -95,7 +95,7 @@
 
   <!-- CLEAN -->
 
-  <Target Name="_CleanFrontendOutputs" DependsOnTargets="_SetupFrontendBuild">
+  <Target Name="_CleanFrontendOutputs" DependsOnTargets="_SetupFrontendBuild" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <Exec Command="$(BuildToolPath) run --if-present $(CleanScriptName)"
           EnvironmentVariables="OUT_DIR=$(FrontendOutputPath)"
           EchoOff="true"
