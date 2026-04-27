@@ -17,7 +17,7 @@
   <ItemGroup>
     <FrontendConfig Include="$(FrontendRootPath)package.json" />
     <FrontendConfig Include="$(FrontendRootPath)package-lock.json" />
-    <FrontendBuild Include="@(FrontendCompilePatterns->'$(MSBuildProjectDirectory)**/%(Identity)')" Exclude="$(FrontendPackagePath)**/*;$(FrontendCompileExcludes)" />
+    <FrontendBuild Include="@(FrontendCompilePatterns->'$(MSBuildProjectDirectory)/**/%(Identity)')" Exclude="$(FrontendPackagePath)**/*;$(FrontendCompileExcludes)" />
 
     <Content Remove="@(FrontendConfig)" />
     <Content Remove="@(FrontendBuild)" />

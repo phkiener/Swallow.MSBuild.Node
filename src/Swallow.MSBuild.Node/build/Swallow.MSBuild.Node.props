@@ -3,14 +3,14 @@
   <PropertyGroup>
     <!--
       All JS-adjacent files (JavaScript, TypeScript and their React variants for good measure) are
-      considered build-relevant.
+      considered build-relevant. We'll use the common CSS preprocessors too, might as well.
 
       By default, we exclude all files in wwwroot/ from our build.
       This means they will stay untouched in <Content> and have no impact on
       the incremental build. They *might* be dependencies to the build nonetheless,
       we can't really detect that. It's up to the user to do that correctly.
     -->
-    <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx;$(FrontendCompilePatterns)</FrontendCompilePatterns>
+    <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx;*.scss;*.sass;*.less;*.styl;$(FrontendCompilePatterns)</FrontendCompilePatterns>
     <ExcludeWwwRoot Condition="$(ExcludeWwwRoot) == ''">true</ExcludeWwwRoot>
     <FrontendCompileExcludes Condition="$(ExcludeWwwRoot) == 'true'">wwwroot/**/*;$(FrontendCompileExcludes)</FrontendCompileExcludes>
   </PropertyGroup>

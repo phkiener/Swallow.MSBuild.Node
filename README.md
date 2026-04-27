@@ -9,7 +9,7 @@ Add a package reference to `Swallow.MSBuild.Node`, but be sure to include the
 assets only for `build`ing:
 
 ```xml
-<PackageReference Include="Swallow.MSBuild.Node" Version="0.1.0">
+<PackageReference Include="Swallow.MSBuild.Node" Version="0.1.1">
   <PrivateAssets>all</PrivateAssets>
   <IncludeAssets>build</IncludeAssets>
 </PackageReference>
@@ -35,7 +35,7 @@ value for every property:
 ```xml
 <PropertyGroup>
   <!-- All extensions of files that should be considered for the build -->
-  <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx</FrontendCompilePatterns>
+  <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx;*.scss;*.sass;*.less;*.styl</FrontendCompilePatterns>
 
   <!-- Whether to ignore files in wwwroot/ for the up-to-date check. -->
   <ExcludeWwwRoot>true</ExcludeWwwRoot>
