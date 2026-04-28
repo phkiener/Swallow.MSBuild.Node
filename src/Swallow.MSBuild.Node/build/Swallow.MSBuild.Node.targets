@@ -6,23 +6,34 @@
   <Target Name="_FrontendClean" BeforeTargets="Clean" DependsOnTargets="_RemoveInstalledPackages;_CleanFrontendOutputs" />
 
   <PropertyGroup>
-    <FrontendRootPath Condition="$(FrontendRootPath) == ''">$(MSBuildProjectDirectory)/</FrontendRootPath>
     <FrontendPackagePath>$(FrontendRootPath)node_modules/</FrontendPackagePath>
-
-    <BuildToolPath Condition="$(BuildToolPath) == ''">npm</BuildToolPath>
-    <BuildScriptName Condition="$(BuildScriptName) == ''">build</BuildScriptName>
-    <CleanScriptName Condition="$(CleanScriptName) == ''">clean</CleanScriptName>
   </PropertyGroup>
 
   <ItemGroup>
     <FrontendConfig Include="$(FrontendRootPath)package.json" />
     <FrontendConfig Include="$(FrontendRootPath)package-lock.json" />
-    <FrontendBuild Include="@(FrontendCompilePatterns->'$(MSBuildProjectDirectory)/**/%(Identity)')" Exclude="$(FrontendPackagePath)**/*;$(FrontendCompileExcludes)" />
 
+    <!-- JS & TS-->
+    <FrontendBuild Include="$(FrontendRootPath)**/*.js" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.jsx" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.ts" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.tsx" />
+
+    <!-- Common CSS preprocessors -->
+    <FrontendBuild Include="$(FrontendRootPath)**/*.scss" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.sass" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.less" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.styl" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- So that the source files (and node_modules) are *definitely* not included in any pack/publish output. -->
     <Content Remove="@(FrontendConfig)" />
     <Content Remove="@(FrontendBuild)" />
     <Content Remove="$(FrontendPackagePath)**/*" />
 
+    <!-- To make sure the files show up in IDEs -->
     <None Include="@(FrontendConfig)" />
     <None Include="@(FrontendBuild)" />
   </ItemGroup>
@@ -31,6 +42,7 @@
 
   <Target Name="_SetupFrontendBuild" Condition="EXISTS('$(FrontendRootPath)package.json')">
     <PropertyGroup>
+      <!-- Set here because we can't get IntermediateOutputPath any earlier -->
       <FrontendOutputPath Condition="$(FrontendOutputPath) == ''">$(MSBuildProjectDirectory)/$(IntermediateOutputPath)dist/</FrontendOutputPath>
     </PropertyGroup>
 
@@ -38,8 +50,8 @@
       <_DependencyInstallStamp Include="$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)npm-install.stamp" />
       <_FrontendBuildStamp Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)npm-build.stamp" />
 
-      <_FrontendBuildInput Include="@(FrontendConfig)" />
-      <_FrontendBuildInput Include="@(FrontendBuild)" />
+      <_FrontendBuildInput Include="@(FrontendConfig)" Exclude="$(FrontendBuildExcludes);$(FrontendPackagePath)**/*;$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
+      <_FrontendBuildInput Include="@(FrontendBuild)" Exclude="$(FrontendBuildExcludes);$(FrontendPackagePath)**/*;$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
     </ItemGroup>
   </Target>
 

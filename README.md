@@ -32,28 +32,43 @@ Otherwise, the resulting output will not be included as static asset.
 `Swallow.MSBuild.Node` can be configured in a number of ways. Shown is the default
 value for every property:
 
-```xml
-<PropertyGroup>
-  <!-- All extensions of files that should be considered for the build -->
-  <FrontendCompilePatterns>*.js;*.jsx;*.ts;*.tsx;*.scss;*.sass;*.less;*.styl</FrontendCompilePatterns>
+### Properties
 
-  <!-- Whether to ignore files in wwwroot/ for the up-to-date check. -->
-  <ExcludeWwwRoot>true</ExcludeWwwRoot>
-  <FrontendCompileExcludes Condition="$(ExcludeWwwRoot) == 'true'">wwwroot/**/*</FrontendCompileExcludes>
+| Name                    | Description                                                                                                                  | Default                                                     |
+|-------------------------|------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| `BuildToolPath`         | Path to the `npm` installation to use                                                                                        | `npm` (resolved via `$PATH`)                                |
+| `BuildScriptName`       | Which npm script to execute on `dotnet build`                                                                                | `build`                                                     |
+| `CleanScriptName`       | Which npm script to execute on `dotnet clean`                                                                                | `clean`                                                     |
+| `ExcludeWwwRoot`        | Whether to exclude items found in `wwwroot/` from the incremental build                                                      | `true`                                                      |
+| `FrontendBuildExcludes` | Which files to exclude for the incremental build                                                                             | `wwwroot/**/*` (if `ExcludeWwwRoot` is `true`)              |
+| `FrontendRootPath`      | The "root" of the frontend build - the `package.json` file is assumed to be in this directory; must include a trailing slash | `$(MSBuildProjectDirectory)/`                               |
+| `FrontendOutputPath`    | Where to put the output of `npm run build`; passed as environment variable `$OUT_DIR`                                        | `$(MSBuildProjectDirectory)/$(IntermediateOutputPath)dist/` |
 
-  <!--
-    Set the "root" of the frontend build to this directory. Be sure to include a trailing slash!
-    The 'package.json', 'package-lock.json' and 'node_modules' are expected to be in this directory.
-  -->
-  <FrontendRootPath>$(MSBuildProjectDirectory)/</FrontendRootPath>
+### Items
 
-  <!-- Path to a specific 'npm' installation to use -->
-  <BuildToolPath>npm</BuildToolPath>
+| Name             | Description                                                                          |
+|------------------|--------------------------------------------------------------------------------------|
+| `FrontendBuild`  | Files to be considered for the incremental build; source code (like `Compile`)       |
+| `FrontendConfig` | Configuration files impacting an incremental build that are not strictly source code |
 
-  <!-- The npm script to execute for 'dotnet build' -->
-  <BuildScriptName>build</BuildScriptName>
+`FrontendBuild` includes - by default - all relevant files found in `$(FrontendRootPath)`, whereas `FrontendConfig`
+includes the `package.json` and `package-lock.json`. Both item groups will be considered for the incremental build;
+if any of these files is _newer_ than the generated output files in `$(FrontendOutputPath)`, a `npm run build` is
+triggered.
 
-  <!-- The npm script to execute for 'dotnet clean' -->
-  <CleanScriptName>clean</CleanScriptName>
-</PropertyGroup>
-```
+You can add your own items to any of these item groups if you need to handle additional files not covered by the
+default includes. Note that certain files will be ignored even when added to the item groups, most notably those found
+in these folders:
+
+- `node_modules/`
+- `wwwroot/` (unless `ExcludeWwwRoot` is set to `false`)
+- `bin/`
+- `obj/`
+
+The default items consider all files with the following extensions as relevant:
+
+- `.js` and `.jsx`
+- `.ts` and `.tsx`
+- `.scss` and `.sass`
+- `.less`
+- `.styl`
