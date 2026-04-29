@@ -7,23 +7,32 @@
 
   <PropertyGroup>
     <FrontendPackagePath>$(FrontendRootPath)node_modules/</FrontendPackagePath>
+    <FrontendBuildExcludes>
+      $(FrontendBuildExcludes);
+      $(FrontendPackagePath)**/*;
+      $(FrontendRootPath)**/*.razor.js;
+      $(FrontendRootPath)**/*.razor.css;
+      $(FrontendRootPath)**/*.cshtml.js;
+      $(FrontendRootPath)**/*.cshtml.css;
+    </FrontendBuildExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <FrontendConfig Include="$(FrontendRootPath)package.json" />
-    <FrontendConfig Include="$(FrontendRootPath)package-lock.json" />
+    <FrontendConfig Include="$(FrontendRootPath)package.json" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendConfig Include="$(FrontendRootPath)package-lock.json" Exclude="$(FrontendBuildExcludes)" />
 
     <!-- JS & TS-->
-    <FrontendBuild Include="$(FrontendRootPath)**/*.js" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.jsx" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.ts" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.tsx" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.js" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.jsx" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.ts" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.tsx" Exclude="$(FrontendBuildExcludes)" />
 
-    <!-- Common CSS preprocessors -->
-    <FrontendBuild Include="$(FrontendRootPath)**/*.scss" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.sass" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.less" />
-    <FrontendBuild Include="$(FrontendRootPath)**/*.styl" />
+    <!-- CSS & common preprocessors -->
+    <FrontendBuild Include="$(FrontendRootPath)**/*.css" Exclude="$(FrontendBuildExcludes)"  />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.scss" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.sass" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.less" Exclude="$(FrontendBuildExcludes)" />
+    <FrontendBuild Include="$(FrontendRootPath)**/*.styl" Exclude="$(FrontendBuildExcludes)" />
 
   </ItemGroup>
 
@@ -50,8 +59,8 @@
       <_DependencyInstallStamp Include="$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)npm-install.stamp" />
       <_FrontendBuildStamp Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)npm-build.stamp" />
 
-      <_FrontendBuildInput Include="@(FrontendConfig)" Exclude="$(FrontendBuildExcludes);$(FrontendPackagePath)**/*;$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
-      <_FrontendBuildInput Include="@(FrontendBuild)" Exclude="$(FrontendBuildExcludes);$(FrontendPackagePath)**/*;$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
+      <_FrontendBuildInput Include="@(FrontendConfig)" Exclude="$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
+      <_FrontendBuildInput Include="@(FrontendBuild)" Exclude="$(BaseIntermediateOutputPath)**/*;$(BaseOutputPath)**/*;" />
     </ItemGroup>
   </Target>
 

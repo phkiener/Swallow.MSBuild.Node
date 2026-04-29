@@ -40,9 +40,18 @@ value for every property:
 | `BuildScriptName`       | Which npm script to execute on `dotnet build`                                                                                | `build`                                                     |
 | `CleanScriptName`       | Which npm script to execute on `dotnet clean`                                                                                | `clean`                                                     |
 | `ExcludeWwwRoot`        | Whether to exclude items found in `wwwroot/` from the incremental build                                                      | `true`                                                      |
-| `FrontendBuildExcludes` | Which files to exclude for the incremental build                                                                             | `wwwroot/**/*` (if `ExcludeWwwRoot` is `true`)              |
+| `FrontendBuildExcludes` | Which files to exclude for the incremental build                                                                             | See below                                                   |
 | `FrontendRootPath`      | The "root" of the frontend build - the `package.json` file is assumed to be in this directory; must include a trailing slash | `$(MSBuildProjectDirectory)/`                               |
 | `FrontendOutputPath`    | Where to put the output of `npm run build`; passed as environment variable `$OUT_DIR`                                        | `$(MSBuildProjectDirectory)/$(IntermediateOutputPath)dist/` |
+
+#### Items excluded by default
+
+There are a handful of patterns configured for `FrontendBuildExcludes` by default:
+
+- `$(FrontendRootPath)node_modules/`
+- `wwwroot/` (unless `ExcludeWwwRoot` is set to `false`)
+- Razor component-specific assets (`$(FrontendRootPath)**/*.razor.js` and `$(FrontendRootPath)**/*.razor.js`)
+- Razor page-specific assets (`$(FrontendRootPath)**/*.cshtml.js` and `$(FrontendRootPath)**/*.cshtml.js`)
 
 ### Items
 
@@ -69,6 +78,7 @@ The default items consider all files with the following extensions as relevant:
 
 - `.js` and `.jsx`
 - `.ts` and `.tsx`
+- `.css`
 - `.scss` and `.sass`
 - `.less`
 - `.styl`
