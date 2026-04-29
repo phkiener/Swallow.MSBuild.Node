@@ -50,8 +50,8 @@ There are a handful of patterns configured for `FrontendBuildExcludes` by defaul
 
 - `$(FrontendRootPath)node_modules/`
 - `wwwroot/` (unless `ExcludeWwwRoot` is set to `false`)
-- Razor component-specific assets (`$(FrontendRootPath)**/*.razor.js` and `$(FrontendRootPath)**/*.razor.js`)
-- Razor page-specific assets (`$(FrontendRootPath)**/*.cshtml.js` and `$(FrontendRootPath)**/*.cshtml.js`)
+- Razor component-specific assets (`$(FrontendRootPath)**/*.razor.js` and `$(FrontendRootPath)**/*.razor.css`)
+- Razor page-specific assets (`$(FrontendRootPath)**/*.cshtml.js` and `$(FrontendRootPath)**/*.cshtml.css`)
 
 ### Items
 
