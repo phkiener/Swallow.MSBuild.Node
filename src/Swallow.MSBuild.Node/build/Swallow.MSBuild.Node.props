@@ -16,6 +16,17 @@
     <CleanScriptName Condition="$(CleanScriptName) == ''">clean</CleanScriptName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <FrontendBuildEnvironmentVariable Include="CONFIGURATION=$(Configuration)" />
+    <FrontendBuildEnvironmentVariable Include="DEBUG_SYMBOLS=$(DebugSymbols)" />
+    <FrontendBuildEnvironmentVariable Include="DETERMINISTIC=$(Deterministic)" />
+    <FrontendBuildEnvironmentVariable Include="WARNINGS_AS_ERRORS=$(TreatWarningsAsErrors)" />
+
+    <FrontendBuildEnvironmentVariable Include="PROJECT_DIRECTORY=$(MSBuildProjectDirectory)" />
+    <FrontendBuildEnvironmentVariable Include="PROJECT_NAME=$(MSBuildProjectName)" />
+    <FrontendBuildEnvironmentVariable Include="ASSEMBLY_NAME=$(AssemblyName)" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!-- https://github.com/dotnet/sdk/blob/bd75158074f6bcba0e58c22ceb13bdd3eb85c473/src/StaticWebAssetsSdk/Architecture.md -->
     <GenerateComputedBuildStaticWebAssetsDependsOn>_IncludeFrontendBuildAssets;$(GenerateComputedBuildStaticWebAssetsDependsOn)</GenerateComputedBuildStaticWebAssetsDependsOn>

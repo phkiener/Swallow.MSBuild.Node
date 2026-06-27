@@ -56,6 +56,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <FrontendBuildEnvironmentVariable Include="OUT_DIR=$(FrontendOutputPath)" />
+
       <_DependencyInstallStamp Include="$(MSBuildProjectDirectory)/$(BaseIntermediateOutputPath)npm-install.stamp" />
       <_FrontendBuildStamp Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)npm-build.stamp" />
 
@@ -82,7 +84,7 @@
     <MakeDir Directories="$(FrontendOutputPath)" />
 
     <Exec Command="$(BuildToolPath) run --if-present $(BuildScriptName)"
-          EnvironmentVariables="OUT_DIR=$(FrontendOutputPath)"
+          EnvironmentVariables="@(FrontendBuildEnvironmentVariable)"
           EchoOff="true"
           WorkingDirectory="$(FrontendRootPath)" />
 

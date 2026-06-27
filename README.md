@@ -55,10 +55,11 @@ There are a handful of patterns configured for `FrontendBuildExcludes` by defaul
 
 ### Items
 
-| Name             | Description                                                                          |
-|------------------|--------------------------------------------------------------------------------------|
-| `FrontendBuild`  | Files to be considered for the incremental build; source code (like `Compile`)       |
-| `FrontendConfig` | Configuration files impacting an incremental build that are not strictly source code |
+| Name                               | Description                                                                          |
+|------------------------------------|--------------------------------------------------------------------------------------|
+| `FrontendBuild`                    | Files to be considered for the incremental build; source code (like `Compile`)       |
+| `FrontendConfig`                   | Configuration files impacting an incremental build that are not strictly source code |
+| `FrontendBuildEnvironmentVariable` | An environment variable that will be passed to `npm`                                 |
 
 `FrontendBuild` includes - by default - all relevant files found in `$(FrontendRootPath)`, whereas `FrontendConfig`
 includes the `package.json` and `package-lock.json`. Both item groups will be considered for the incremental build;
@@ -82,3 +83,25 @@ The default items consider all files with the following extensions as relevant:
 - `.scss` and `.sass`
 - `.less`
 - `.styl`
+
+### Environment variables
+
+By default, the following MSBuild properties are passed to the `npm` process:
+
+- `$(Configuration)` as `CONFIGURATION`
+- `$(DebugSymbols)` as `DEBUG_SYMBOLS`
+- `$(Deterministic)` as `DETERMINISTIC`
+- `$(TreatWarningsAsErrors)` as `WARNINGS_AS_ERRORS`
+- `$(MSBuildProjectDirectory)` as `PROJECT_DIRECTORY`
+- `$(MSBuildProjectName)` as `PROJECT_NAME`
+- `$(AssemblyName)` as `ASSEMBLY_NAME`
+
+You can define additional variables by adding `FrontendBuildEnvironmentVariable` items.
+
+```xml
+<ItemGroup>
+  <FrontendBuildEnvironmentVariable Include="Foo=Bar" />
+</ItemGroup>
+```
+
+(`OUT_DIR` is defined like this too, by the way!)
