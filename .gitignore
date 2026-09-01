@@ -1,6 +1,7 @@
 # Build output
 [bB]in/
 [oO]bj/
+[pP]ack/
 [pP]ublish/
 [pP]ackages/
 TestResults/
