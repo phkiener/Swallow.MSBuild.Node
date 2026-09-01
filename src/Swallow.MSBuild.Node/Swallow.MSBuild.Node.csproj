@@ -1,7 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- "Inspired" by https://github.com/dotnet/samples/blob/main/msbuild/custom-task-code-generation/AppSettingStronglyTyped/AppSettingStronglyTyped/AppSettingStronglyTyped.csproj -->
-
   <PropertyGroup>
     <NoWarn>NU5100</NoWarn>
     <GenerateDependencyFile>true</GenerateDependencyFile>
@@ -25,7 +22,7 @@
 
   <Target Name="AddBuildDependencyFileToBuiltProjectOutputGroupOutput"
           BeforeTargets="BuiltProjectOutputGroup"
-          Condition=" '$(GenerateDependencyFile)' == 'true'">
+          Condition="'$(GenerateDependencyFile)' == 'true'">
     <ItemGroup>
       <BuiltProjectOutputGroupOutput
         Include="$(ProjectDepsFilePath)"
@@ -33,5 +30,4 @@
         FinalOutputPath="$(ProjectDepsFilePath)" />
     </ItemGroup>
   </Target>
-
 </Project>

@@ -2,14 +2,6 @@
 
   <!-- Emulate the package being a NuGet dependency: -->
   <Import Project="../../../src/Swallow.MSBuild.Node/build/Swallow.MSBuild.Node.props" />
-
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-
-  <!-- Emulate the package being a NuGet dependency: -->
   <Import Project="../../../src/Swallow.MSBuild.Node/build/Swallow.MSBuild.Node.targets" />
 
 </Project>

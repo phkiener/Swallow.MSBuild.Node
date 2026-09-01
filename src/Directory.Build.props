@@ -1,33 +1,39 @@
 <Project>
+  <Import Project="../Directory.Build.props" />
   <PropertyGroup>
-
-    <!-- General options -->
     <TargetFramework>netstandard2.0</TargetFramework>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>disable</Nullable>
 
-    <ContinuousIntegrationBuild Condition="$(Configuration) == 'Release'">true</ContinuousIntegrationBuild>
-    <Deterministic>true</Deterministic>
-
-    <!-- NuGet options -->
     <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>embedded</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) == 'Release'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package metadata">
+    <PackageTags>msbuild;node;npm;frontend;swallow</PackageTags>
+    <Description>An integration of NodeJS-based build tooling into MSBuild</Description>
 
     <Authors>Philipp Kiener</Authors>
     <Copyright>2026 Philipp Kiener</Copyright>
     <PackageProjectUrl>https://github.com/phkiener/Swallow.MSBuild.Node</PackageProjectUrl>
 
+    <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageTags>msbuild;node;npm;frontend;</PackageTags>
-    <Description>An integration of NodeJS-based build tooling into MSBuild</Description>
 
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/phkiener/Swallow.MSBuild.Node</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Always included files -->
+  <ItemGroup Label="Package files">
     <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" Visible="false" />
     <None Include="$(MSBuildThisFileDirectory)../LICENSE.txt" Pack="true" PackagePath="/" Visible="false" />
     <None Include="$(MSBuildThisFileDirectory)../icon.png" Pack="true" PackagePath="/" Visible="false" />
